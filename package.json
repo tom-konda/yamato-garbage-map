@@ -1,0 +1,23 @@
+{
+  "name": "garbage-map",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "spl": "node scripts/spl.js_test.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.7"
+  },
+  "dependencies": {
+    "cross-env": "^10.1.0",
+    "csv-parse": "^6.1.0",
+    "maplibre-gl": "^5.8.0",
+    "proj4": "^2.19.10"
+  }
+}
