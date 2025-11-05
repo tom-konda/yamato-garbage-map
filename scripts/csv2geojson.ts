@@ -6,8 +6,9 @@ import proj4 from 'proj4'
 
 const paths = globSync('./resources/*.csv');
 proj4.defs([
-    ["EPSG:4301",
-        "+proj=longlat +ellps=bessel +towgs84=-146.414,507.337,680.507,0,0,0,0 +no_defs"
+    [
+      'EPSG:4301',
+      '+proj=longlat +ellps=bessel +towgs84=-146.414,507.337,680.507,0,0,0,0 +no_defs'
     ]
 ]);
 
@@ -22,9 +23,9 @@ Promise.all(
       const decodedText = decoder.decode(file);
 
       const geoJSON: {type: string, features: any[], name: string} = {
-        "type": "FeatureCollection",
+        'type': 'FeatureCollection',
         name,
-        "features": [],
+        'features': [],
       };
       
       const result = CSVParse<Record<string, string>>(
@@ -70,13 +71,13 @@ Promise.all(
           ]
         );
         const point = {
-          "type": "Feature",
-          "properties": {
+          'type': 'Feature',
+          'properties': {
             ...metaData,
           },
-          "geometry": {
-            "type": "Point",
-            "coordinates": epsg4326LonLat,
+          'geometry': {
+            'type': 'Point',
+            'coordinates': epsg4326LonLat,
           },
         };
         geoJSON.features.push(point);
