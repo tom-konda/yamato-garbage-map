@@ -49,9 +49,14 @@ const map = new Map({
         id: 'risaikurusutesyon',
         source: 'risaikurusutesyon',
         type: 'circle',
-        minzoom: 16,
         paint: {
-          'circle-color': 'skyblue',
+          'circle-color': [
+            'case',
+            ['==', ['get', '種類'], '使用済み小型家電回収ボックス'], 'navy',
+            ['==', ['get', 'isAbandoned'], '0'], 'skyblue',
+            ['==', ['get', 'isAbandoned'], '1'], 'gray',
+            'black',
+          ],
         }
       },
       {
@@ -59,7 +64,12 @@ const map = new Map({
         source: 'siteigimitoriatukai',
         type: 'circle',
         paint: {
-          'circle-color': 'yellow',
+          'circle-color': [
+            'case',
+            ['==', ['get', 'isAbandoned'], '0'], 'yellow',
+            ['==', ['get', 'isAbandoned'], '1'], 'gray',
+            'black',
+          ],
           'circle-radius': 7,
         }
       },
@@ -75,6 +85,17 @@ const map = new Map({
     ],
   }
 })
+
+
+const createRow = (item: string, content: string) => {
+  const row = document.querySelector<HTMLTemplateElement>('#table-row')?.content.cloneNode(true)as DocumentFragment;
+  const firstRow = row.querySelector('th') as HTMLTableCellElement;
+  firstRow.textContent = item;
+  const lastRow = row.querySelector<HTMLTableCellElement>('td') as HTMLTableCellElement;
+  lastRow.textContent = content;
+  row.append(firstRow, lastRow);
+  return row;
+}
 
 map.on(
   'load',
@@ -119,8 +140,31 @@ map.on(
           }
         }
         else {
-          popup.setHTML(`<p>${feature.properties['名称']}</p>`)
-          .addTo(map);
+          const template = document.querySelector<HTMLTemplateElement>('#popup-recycle')?.content.cloneNode(true) as DocumentFragment;
+          const caption = template?.querySelector('caption');
+          if (template && caption) {
+            caption.textContent = feature.properties['名称'];
+            const table = template.querySelector('table') as HTMLTableElement
+            table.append(createRow('回収品目', feature.properties['回収品目']));
+            table.append(createRow('回収日', feature.properties['回収日']));
+            let otherText = '';
+            if (feature.properties['その他情報'].length) {
+              otherText = feature.properties['その他情報'];
+            }
+            if (!/^\d{3}-.+?-\d+$/.test(feature.properties['コメント'])) {
+              otherText += '\n';
+              let comment = (<string>feature.properties['コメント']).replace(/^\d{3}-.+?-\d+/, '');
+              if (comment.startsWith('、')) {
+                comment = comment.substring(1);
+              }
+              otherText += comment.trim();
+            }
+            if (otherText.length) {
+              table.append(createRow('その他', otherText.trim()));
+            }
+            popup.setDOMContent(template)
+              .addTo(map);
+          }
         }
       }
     )

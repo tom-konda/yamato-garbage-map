@@ -39,6 +39,12 @@ h1 {
   margin: 0;
 }
 
+.recycle-table {
+  .recycle-content {
+    white-space: pre-line;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

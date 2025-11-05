@@ -38,8 +38,23 @@ Promise.all(
       result.forEach(row => {
         const {緯度: lat, 経度: lng, ...metaData} = row;
 
-        if (name === 'siteigimitoriatukai' && metaData['その他情報'].includes('廃業')) {
-          return;
+        if (name === 'siteigimitoriatukai') {
+          metaData['isAbandoned'] = '0';
+          if (metaData['その他情報'].includes('廃業')) {
+            metaData['isAbandoned'] = '1';
+          }
+        }
+        else if (name === 'risaikurusutesyon') {
+          metaData['回収日'] = metaData['回収日'].replaceAll(/<br>/ig, '\n');
+          metaData['その他情報'] = metaData['その他情報'].replaceAll(/<br>/ig, '\n');
+          metaData['コメント'] = metaData['コメント'].replaceAll(/<br>/ig, '\n');
+          metaData['isAbandoned'] = '0';
+          if (metaData['その他情報'].includes('廃止')) {
+            metaData['isAbandoned'] = '1';
+          }
+          else if (metaData['コメント'].includes('廃止')) {
+            metaData['isAbandoned'] = '1';
+          }
         }
 
         const latLng = {
