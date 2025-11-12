@@ -52,10 +52,18 @@ const map = new Map({
         paint: {
           'circle-color': [
             'case',
-            ['==', ['get', '種類'], '使用済み小型家電回収ボックス'], 'navy',
-            ['==', ['get', 'isAbandoned'], '0'], 'skyblue',
             ['==', ['get', 'isAbandoned'], '1'], 'gray',
+            ['==', ['get', '種類'], '使用済み小型家電回収ボックス'], 'blue',
+            ['==', ['get', 'isPrivate'], '1'], 'skyblue',
+            ['==', ['get', 'isAbandoned'], '0'], 'royalblue',
             'black',
+          ],
+          'circle-radius': [
+            'case',
+            ['==', ['get', '種類'], '拠点回収'], 7,
+            ['==', ['get', '種類'], '使用済み小型家電回収ボックス'], 6,
+            ['==', ['get', 'isPrivate'], '1'], 5,
+            5,
           ],
         }
       },
@@ -88,7 +96,7 @@ const map = new Map({
 
 
 const createRow = (item: string, content: string) => {
-  const row = document.querySelector<HTMLTemplateElement>('#table-row')?.content.cloneNode(true)as DocumentFragment;
+  const row = document.querySelector<HTMLTemplateElement>('#table-row')?.content.cloneNode(true) as DocumentFragment;
   const firstRow = row.querySelector('th') as HTMLTableCellElement;
   firstRow.textContent = item;
   const lastRow = row.querySelector<HTMLTableCellElement>('td') as HTMLTableCellElement;
@@ -141,30 +149,38 @@ map.on(
         }
         else {
           const template = document.querySelector<HTMLTemplateElement>('#popup-recycle')?.content.cloneNode(true) as DocumentFragment;
-          const caption = template?.querySelector('caption');
-          if (template && caption) {
-            caption.textContent = feature.properties['名称'];
-            const table = template.querySelector('table') as HTMLTableElement
+          const caption = template?.querySelector('caption') as HTMLTableCaptionElement;
+          caption.textContent = feature.properties['名称'];
+          const table = template.querySelector('table') as HTMLTableElement
+
+          if (feature.properties['種類'] === '使用済み小型家電回収ボックス') {
+            table.append(createRow('種類', feature.properties['種類']));
+          } 
+          else {
+            if (feature.properties['種類'] === '拠点回収') {
+              table.append(createRow('種類', feature.properties['種類']));
+            }
             table.append(createRow('回収品目', feature.properties['回収品目']));
             table.append(createRow('回収日', feature.properties['回収日']));
-            let otherText = '';
-            if (feature.properties['その他情報'].length) {
-              otherText = feature.properties['その他情報'];
-            }
-            if (!/^\d{3}-.+?-\d+$/.test(feature.properties['コメント'])) {
-              otherText += '\n';
-              let comment = (<string>feature.properties['コメント']).replace(/^\d{3}-.+?-\d+/, '');
-              if (comment.startsWith('、')) {
-                comment = comment.substring(1);
-              }
-              otherText += comment.trim();
-            }
-            if (otherText.length) {
-              table.append(createRow('その他', otherText.trim()));
-            }
-            popup.setDOMContent(template)
-              .addTo(map);
           }
+
+          let otherText = '';
+          if (feature.properties['その他情報'].length) {
+            otherText = feature.properties['その他情報'];
+          }
+          if (!/^\d{3}-.+?-\d+$/.test(feature.properties['コメント'])) {
+            otherText += '\n';
+            let comment = (<string>feature.properties['コメント']).replace(/^\d{3}-.+?-\d+/, '');
+            if (comment.startsWith('、')) {
+              comment = comment.substring(1);
+            }
+            otherText += comment.trim();
+          }
+          if (otherText.length) {
+            table.append(createRow('その他', otherText.trim()));
+          }
+          popup.setDOMContent(template)
+            .addTo(map);
         }
       }
     )

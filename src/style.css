@@ -40,6 +40,10 @@ h1 {
 }
 
 .recycle-table {
+  th {
+    text-align: right;
+  }
+
   .recycle-content {
     white-space: pre-line;
   }
