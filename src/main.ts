@@ -28,14 +28,9 @@ const map = new Map({
         data: './public/risaikurusutesyon.geojson',
         attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
       },
-      siteigimitoriatukai: {
+      cityDesignatedStore: {
         type: 'geojson',
-        data: './public/siteigimitoriatukai.geojson',
-        attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
-      },
-      sodaigomisyousitoriatukaiten: {
-        type: 'geojson',
-        data: './public/sodaigomisyousitoriatukaiten.geojson',
+        data: './public/cityDesignatedStore.geojson',
         attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
       },
     },
@@ -68,25 +63,18 @@ const map = new Map({
         }
       },
       {
-        id: 'siteigimitoriatukai',
-        source: 'siteigimitoriatukai',
+        id: 'cityDesignatedStore',
+        source: 'cityDesignatedStore',
         type: 'circle',
         paint: {
           'circle-color': [
             'case',
-            ['==', ['get', 'isAbandoned'], '0'], 'yellow',
             ['==', ['get', 'isAbandoned'], '1'], 'gray',
+            ['==', ['get', 'type'], '1'], 'green',
+            ['==', ['get', 'type'], '2'], 'yellow',
+            ['==', ['get', 'type'], '3'], 'limegreen',
             'black',
           ],
-          'circle-radius': 7,
-        }
-      },
-      {
-        id: 'sodaigomisyousitoriatukaiten',
-        source: 'sodaigomisyousitoriatukaiten',
-        type: 'circle',
-        paint: {
-          'circle-color': 'green',
           'circle-radius': 7,
         }
       },
@@ -116,8 +104,7 @@ map.on(
           {
             layers: [
               'risaikurusutesyon',
-              'siteigimitoriatukai',
-              'sodaigomisyousitoriatukaiten',
+              'cityDesignatedStore',
             ],
           }
         );
@@ -130,22 +117,34 @@ map.on(
           .setLngLat((<GeoJSON.Point>feature.geometry).coordinates as LngLatLike);
 
         if (feature.source !== 'risaikurusutesyon') {
-          const template = document.querySelector<HTMLTemplateElement>('#popup-shop')?.content.cloneNode(true) as DocumentFragment;
-          const ruby = template?.querySelector('ruby');
-          if (template && ruby) {
-            ruby.prepend(feature.properties['名称']);
-            const rt = ruby?.querySelector('rt');
-            if (rt) {
-              rt.textContent = feature.properties['ふりがな'];
-            }
-            if ((feature.properties['その他情報'] as string).length) {
-              const misc = document.createElement('div');
-              misc.insertAdjacentHTML('beforeend', feature.properties['その他情報']);
-              template?.firstElementChild?.append(misc);
-            }
-            popup.setDOMContent(template)
-              .addTo(map);
+          const template = document.querySelector<HTMLTemplateElement>('#popup-store')?.content.cloneNode(true) as DocumentFragment;
+          const ruby = template?.querySelector('ruby')  as HTMLElement;
+
+          ruby.prepend(feature.properties['名称']);
+          const rt = ruby?.querySelector('rt');
+          if (rt) {
+            rt.textContent = feature.properties['ふりがな'];
           }
+
+          const table = template.querySelector('table') as HTMLTableElement
+          let sellingProduct = '';
+          switch (feature.properties['type']) {
+            case '1':
+              sellingProduct = '粗大ゴミ証紙';
+              break;
+            case '2':
+              sellingProduct = '市指定ゴミ袋';
+              break;
+            case '3':
+              sellingProduct = '市指定ゴミ袋・粗大ゴミ証紙';
+              break;
+          }
+          table.append(createRow('取扱品目', sellingProduct));
+          if ((feature.properties['その他情報'] as string).length) {
+            table.append(createRow('その他情報', feature.properties['その他情報']));
+          }
+          popup.setDOMContent(template)
+            .addTo(map);
         }
         else {
           const template = document.querySelector<HTMLTemplateElement>('#popup-recycle')?.content.cloneNode(true) as DocumentFragment;
