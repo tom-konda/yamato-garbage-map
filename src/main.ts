@@ -1,6 +1,8 @@
 import './style.css'
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Map, Popup } from 'maplibre-gl';
+import risaikurusutesyonURL from '../public/risaikurusutesyon.geojson?url';
+import cityDesignatedStoreURL from '../public/cityDesignatedStore.geojson?url';
 import type { LngLatLike } from 'maplibre-gl';
 
 const map = new Map({
@@ -25,12 +27,12 @@ const map = new Map({
       },
       risaikurusutesyon: {
         type: 'geojson',
-        data: './public/risaikurusutesyon.geojson',
+        data: risaikurusutesyonURL,
         attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
       },
       cityDesignatedStore: {
         type: 'geojson',
-        data: './public/cityDesignatedStore.geojson',
+        data: cityDesignatedStoreURL,
         attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
       },
     },
