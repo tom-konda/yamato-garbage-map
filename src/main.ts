@@ -85,11 +85,10 @@ const map = new Map({
 
 const createRow = (item: string, content: string) => {
   const row = document.querySelector<HTMLTemplateElement>('#table-row')?.content.cloneNode(true) as DocumentFragment;
-  const firstRow = row.querySelector('th') as HTMLTableCellElement;
-  firstRow.textContent = item;
-  const lastRow = row.querySelector<HTMLTableCellElement>('td') as HTMLTableCellElement;
-  lastRow.textContent = content;
-  row.append(firstRow, lastRow);
+  const headerCol = row.querySelector('th') as HTMLTableCellElement;
+  headerCol.textContent = item;
+  const dataCol = row.querySelector<HTMLTableCellElement>('td') as HTMLTableCellElement;
+  dataCol.textContent = content;
   return row;
 }
 
