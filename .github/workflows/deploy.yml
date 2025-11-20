@@ -1,0 +1,32 @@
+name: "Deploy to github pages"
+on:
+  push:
+    branches: ['main']
+env:
+  IS_GITHUB: 'true'
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Build
+        run: |
+          pnpm install
+          pnpm convert
+          pnpm build
+      - name: Deploy
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
