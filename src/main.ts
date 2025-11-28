@@ -85,12 +85,12 @@ const map = new Map({
 })
 
 
-const createRow = (item: string, content: string) => {
+const createRow = (item: string, content: Array<string|HTMLElement>) => {
   const row = document.querySelector<HTMLTemplateElement>('#table-row')?.content.cloneNode(true) as DocumentFragment;
   const headerCol = row.querySelector('th') as HTMLTableCellElement;
   headerCol.textContent = item;
   const dataCol = row.querySelector<HTMLTableCellElement>('td') as HTMLTableCellElement;
-  dataCol.textContent = content;
+  dataCol.append(...content);
   return row;
 }
 
@@ -137,12 +137,26 @@ map.on(
               sellingProduct = '市指定ゴミ袋';
               break;
             case '3':
-              sellingProduct = '市指定ゴミ袋・粗大ゴミ証紙';
+              sellingProduct = '市指定ゴミ袋、粗大ゴミ証紙';
               break;
           }
-          table.append(createRow('取扱品目', sellingProduct));
+
+          const otherInfo: Array<string|HTMLElement> = [];
+          if (feature.properties['type'] !== '2') {
+            const link = document.createElement('a');
+            link.textContent = '市のホームページ';
+            link.href = `https://www.city.yamato.lg.jp/gyosei/soshik/75/gomi_recycle/kateikaraderugomi/5233.html`;
+            link.target = '_blank'
+            const note = document.createElement('p');
+            note.append(...['し尿証紙の取り扱いに関しては、', link, 'を確認してください'])
+            otherInfo.push(note);
+          }
+          table.append(createRow('取扱品目', [sellingProduct]));
           if ((feature.properties['その他情報'] as string).length) {
-            table.append(createRow('その他情報', feature.properties['その他情報']));
+            otherInfo.push(feature.properties['その他情報']);
+          }
+          if (otherInfo.length) {
+            table.append(createRow('その他情報', otherInfo));
           }
           popup.setDOMContent(template)
             .addTo(map);
@@ -155,6 +169,13 @@ map.on(
 
           if (feature.properties['種類'] === '使用済み小型家電回収ボックス') {
             table.append(createRow('種類', feature.properties['種類']));
+            const link = document.createElement('a');
+            link.textContent = '市のホームページ';
+            link.href = `https://www.city.yamato.lg.jp/gyosei/soshik/75/gomi_recycle/shigen_recycle/6759.html`;
+            link.target = '_blank'
+            const note = document.createElement('p');
+            note.append(...[link, 'を確認してください'])
+            table.append(createRow('回収品目', [note]));
           } 
           else {
             if (feature.properties['種類'] === '拠点回収') {
@@ -177,7 +198,7 @@ map.on(
             otherText += comment.trim();
           }
           if (otherText.length) {
-            table.append(createRow('その他', otherText.trim()));
+            table.append(createRow('その他', [otherText.trim()]));
           }
           popup.setDOMContent(template)
             .addTo(map);
