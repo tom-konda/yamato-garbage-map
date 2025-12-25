@@ -28,12 +28,18 @@ const map = new Map({
       risaikurusutesyon: {
         type: 'geojson',
         data: risaikurusutesyonURL,
-        attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
+        attribution: `
+          <a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">
+            大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)
+          </a>を一部改変（<a href="https://github.com/tom-konda/yamato-garbage-map">変更の詳細</a>）`
       },
       cityDesignatedStore: {
         type: 'geojson',
         data: cityDesignatedStoreURL,
-        attribution: '<a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)</a>を一部改変'
+        attribution: `
+          <a href="https://www.city.yamato.lg.jp/gyosei/soshik/11/digitalservice/opendata/5154.html">
+            大和市公開型地図情報サービスに掲載されている地点情報データ一覧(オープンデータ)
+          </a>を一部改変（<a href="https://github.com/tom-konda/yamato-garbage-map">変更の詳細</a>）`
       },
     },
     layers: [
