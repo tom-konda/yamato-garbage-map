@@ -4,6 +4,7 @@ import { parse as CSVParse } from 'csv-parse/sync';
 import { resolve, parse } from 'node:path';
 import proj4 from 'proj4'
 
+// 名寄せアルゴリズムの関係上、ファイル名を逆順にする
 const paths = globSync('./resources/*.csv').sort().reverse();
 
 /**
