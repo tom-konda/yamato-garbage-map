@@ -30,5 +30,42 @@
     <template id="table-row">
       <tr><th scope="row"></th><td class="recycle-content"></td></tr>
     </template>
+    <template id="store-recycle-control">
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="all" checked />
+          全て表示
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="garbage" />
+          ゴミ処理関係
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="recycle" />
+          リサイクル関係
+        </label>
+      </div>
+      <hr />
+      <section id="selected-data-options">
+        <div data-type="garbage">
+          <select data-option-type="garbage">
+            <option value="default">標準</option>
+            <option value="sitei_only">指定ゴミ袋販売店のみ</option>
+            <option value="sodai_only">粗大ゴミ証紙販売店のみ</option>
+          </select>
+        </div>
+        <div data-type="recycle">
+          <select data-option-type="recycle">
+            <option value="default">標準</option>
+            <option value="except_private">集合住宅専用の除外</option>
+            <option value="district">リサイクルステーション回収地区別</option>
+          </select>
+        </div>
+      </section>
+    </template>
   </body>
 </html>

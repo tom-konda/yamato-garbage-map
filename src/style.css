@@ -49,6 +49,11 @@ h1 {
   }
 }
 
+#store-recycle-control-wrapper {
+  background: #fff;
+  padding: 1em;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
