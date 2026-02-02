@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>garbage-map</title>
+    <script type="module" crossorigin src="/yamato-garbage-map/assets/index-BjZe5IsV.js"></script>
+    <link rel="stylesheet" crossorigin href="/yamato-garbage-map/assets/index-DiqbwbPx.css">
+  </head>
+  <body>
+    <figure id="map"></figure>
+    <template id="popup-store">
+      <table class="store-table">
+        <caption>
+          <ruby>
+            <rp>(</rp><rt></rt><rp>)</rp>
+          </ruby>
+        </caption>
+        <tbody>
+        </tbody>
+      </table>
+    </template>
+    <template id="popup-recycle">
+      <table class="recycle-table">
+        <caption></caption>
+        <tbody>
+        </tbody>
+      </table>
+    </template>
+    <template id="table-row">
+      <tr><th scope="row"></th><td class="recycle-content"></td></tr>
+    </template>
+    <template id="store-recycle-control">
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="all" checked />
+          全て表示
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="garbage" />
+          ゴミ処理関係
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="data-type" value="recycle" />
+          リサイクル関係
+        </label>
+      </div>
+      <hr />
+      <section id="selected-data-options">
+        <div data-type="garbage">
+          <select data-option-type="garbage">
+            <option value="default">標準</option>
+            <option value="sitei_only">指定ゴミ袋販売店のみ</option>
+            <option value="sodai_only">粗大ゴミ証紙販売店のみ</option>
+          </select>
+        </div>
+        <div data-type="recycle">
+          <select data-option-type="recycle">
+            <option value="default">標準</option>
+            <option value="except_private">集合住宅専用の除外</option>
+            <option value="district">リサイクルステーション回収地区別</option>
+          </select>
+        </div>
+      </section>
+    </template>
+  </body>
+</html>
