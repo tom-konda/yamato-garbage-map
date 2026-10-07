@@ -2,20 +2,9 @@ import { globSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { parse as CSVParse } from 'csv-parse/sync';
 import { resolve, parse } from 'node:path';
-import proj4 from 'proj4'
 
 // 名寄せアルゴリズムの関係上、ファイル名を逆順にする
 const paths = globSync('./resources/*.csv').sort().reverse();
-
-/**
- * @see https://qiita.com/takahi/items/85732f577820d8f76b3e
- */
-proj4.defs([
-  [
-    'EPSG:4301',
-    '+proj=longlat +ellps=bessel +towgs84=-146.414,507.337,680.507,0,0,0,0 +no_defs'
-  ]
-]);
 
 let cityDesignatedStoreList:Array<Record<string, any>> = [];
 let sodaiList:Array<string> = [];
@@ -36,18 +25,16 @@ const createDesignatedStoreList = (name:string, row:Record<string, string>) => {
     lat,
     lng,
   }
-  const epsg4326LonLat = proj4(
-    'EPSG:4301',
-    'EPSG:4326',
-    [
-        Number(latLng.lng),
-        Number(latLng.lat),
-    ]
-  );
+  const epsg4326LonLat = [
+    Number(latLng.lng),
+    Number(latLng.lat),
+  ]
   metaData['normalizedKana'] = metaData['ふりがな'];
   metaData['normalizedKana'] = metaData['normalizedKana'].replaceAll(/[　| ]/g, '');
   metaData['normalizedKana'] = metaData['normalizedKana'].replaceAll(/(ゆうげん|かぶしき)がいしゃ/g, '');
-  if (name === 'sodaigomisyousitoriatukaiten') {
+
+  // 粗大ゴミ証紙店
+  if (name === 'sodaigomisyoushi') {
     if (metaData['その他情報'].includes('廃業')) {
       metaData['isAbandoned'] = '1';
     }
@@ -65,7 +52,9 @@ const createDesignatedStoreList = (name:string, row:Record<string, string>) => {
       },
     });
   }
+  // 指定ゴミ袋取扱店
   else {
+    // 指定ゴミ袋取扱店と粗大ゴミ証紙店が同一店舗扱いに出来る時
     if (sodaiList.includes(metaData['normalizedKana'])) {
       const sameKanaIndex = sodaiList.indexOf(metaData['normalizedKana']);
       const sodaiRow = cityDesignatedStoreList.at(sameKanaIndex);
@@ -131,7 +120,8 @@ await Promise.all(
       result.forEach(row => {
         const {緯度: lat, 経度: lng, ...metaData} = row;
 
-        if (name === 'risaikurusutesyon') {
+        // リサイクルステーションのみ
+        if (name === 'recyclestation') {
           metaData['回収日'] = metaData['回収日'].replaceAll(/<br>/ig, '\n');
           metaData['その他情報'] = metaData['その他情報'].replaceAll(/<br>/ig, '\n');
           metaData['コメント'] = metaData['コメント'].replaceAll(/<br>/ig, '\n');
@@ -150,14 +140,10 @@ await Promise.all(
             lat,
             lng,
           }
-          const epsg4326LonLat = proj4(
-            'EPSG:4301',
-            'EPSG:4326',
-            [
-                Number(latLng.lng),
-                Number(latLng.lat),
-            ]
-          );
+          const epsg4326LonLat = [
+            Number(latLng.lng),
+            Number(latLng.lat),
+          ];
           const point = {
             'type': 'Feature',
             'properties': {
@@ -170,12 +156,13 @@ await Promise.all(
           };
           geoJSON.features.push(point);
         }
+        // 粗大ゴミ証紙店、指定ゴミ袋取扱店
         else {
           createDesignatedStoreList(name, row);
         }
       });
-      // console.log(decoder.decode(file));
-      if (name === 'risaikurusutesyon') {
+      // リサイクルステーションのみ先に保存
+      if (name === 'recyclestation') {
         const outputFullPath = resolve(`./public/${name}.geojson`);
         return writeFile(outputFullPath, JSON.stringify(geoJSON, null, 2));
       }

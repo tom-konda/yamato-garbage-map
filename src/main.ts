@@ -1,7 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css'
 import { Map, Popup } from 'maplibre-gl';
-import risaikurusutesyonURL from '../public/risaikurusutesyon.geojson?url';
+import risaikurusutesyonURL from '../public/recyclestation.geojson?url';
 import cityDesignatedStoreURL from '../public/cityDesignatedStore.geojson?url';
 import type { LngLatLike } from 'maplibre-gl';
 import { MapGeoJSONFeature } from 'maplibre-gl';
